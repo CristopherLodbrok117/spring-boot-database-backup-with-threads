@@ -13,7 +13,7 @@ Dependencias:
 1. Implementaremos el CRUD de nuestra aplicación de manera normal y configuramos el aplication properties
 2. Creamos la base de datos con MySQL Workbench
 ```sql
-CREATE DATAABSE threads_db;
+CREATE DATABSE threads_db;
 ```
 3. Para propositos ilustrativos añadimos un endpoint que nos permita eliminar de manera física todos los registros. En un supuesto donde la eliminación deberia ser lógica, al eliminar de manera física se estaria corrompiendo la integridad de la base de datos.
 
