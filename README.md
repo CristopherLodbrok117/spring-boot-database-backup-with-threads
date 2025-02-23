@@ -36,7 +36,7 @@ Este código se encarga de crear un backup y restaurar una base de datos MySQL u
 Definimos el criterio para detectar si la base de datos fue alterada. En este caso utilizaremos la cuenta de registros de la tabla de campeones
 `championRepository.count()`
 
-### monitoringDB
+### Hilo para monitorear el estado de la base de datos
 ```java
 @Scheduled(fixedDelay =  5000)
     public void monitoringDatabase(){
@@ -74,7 +74,7 @@ En la capa de lógica de la aplicación (service) verificamos si la base de dato
 
 <br>
 
-### backupDB
+### Crear respaldo
 ```java
 public void createBackup(){
         String mysqldump = "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysqldump";
@@ -104,7 +104,7 @@ public void createBackup(){
 
 <br>
 
-### restoreDB
+### Restaurar Base de Datos
 ```java
 public void restoreDB(){
         String mysql = "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysql";
@@ -134,7 +134,7 @@ public void restoreDB(){
 
 <br>
 
-### getProcessBuilder
+### ProcessBuilder
 ```java
 private static ProcessBuilder getProcessBuilder(String commandToExecute, int redirectionType) {
 
@@ -163,12 +163,7 @@ private static ProcessBuilder getProcessBuilder(String commandToExecute, int red
     }
 ```
 - Define las credenciales de la base de datos y la ubicación del archivo de backup.
-- Construye una lista de comandos (command), añadiendo:
-1. El comando (mysqldump o mysql).
-2. El usuario de la BD (-uroot).
-3. La contraseña (-p1234).
-4. El nombre de la base de datos.
-
+- Construye una lista, para ejecutar el comando recibido
 - Crea un ProcessBuilder con esta lista de comandos.
 - Configura la redirección de entrada/salida:
 - Si es OUTPUT_REDIRECT → Redirige la salida del comando (mysqldump) a un archivo SQL.
@@ -185,32 +180,35 @@ Desde [Insomnia](https://insomnia.rest/) creamos las request con las que probare
 
 ![run API](https://github.com/CristopherLodbrok117/spring-boot-database-backup-with-threads/blob/c75f098ba17083384c49ad67e25737763ad26fad/screens/0%20-%20Running%20API.png)
 
-2. 
 
-![show all]()
+2. Mostramos todos los registros actuales
 
-3. Mostramos todos los registros actuales (GET)
+![show all](https://github.com/CristopherLodbrok117/spring-boot-database-backup-with-threads/blob/4dddc05322fb6df3ab881497778d7932d70d038a/screens/1%20-%20show%20all.png)
 
-![]()
+3. Intentamos obtener un registro no existente
 
-4. Intentamos obtener un registro no existente
+![not found](https://github.com/CristopherLodbrok117/spring-boot-database-backup-with-threads/blob/4dddc05322fb6df3ab881497778d7932d70d038a/screens/2%20-%20champion%20not%20found.png)
 
-![]()
+4. Añadimos un nuevo registro
 
-5. Añadimos un nuevo registro
+![created](https://github.com/CristopherLodbrok117/spring-boot-database-backup-with-threads/blob/4dddc05322fb6df3ab881497778d7932d70d038a/screens/3%20-%20created.png)
 
-![]()
+5. Tras crear un nuevo registro se realiza un respaldo
 
-6. Tras crear un nuevo registro se hace backup
+![backup](https://github.com/CristopherLodbrok117/spring-boot-database-backup-with-threads/blob/4dddc05322fb6df3ab881497778d7932d70d038a/screens/4%20-%20on%20save%20backup.png)
 
-![]()
+6. Verificamos que se creo correctamente el nuevo campeón
 
-7. Verificamos que se creo correctamente el nuevo campeón
+![find one](https://github.com/CristopherLodbrok117/spring-boot-database-backup-with-threads/blob/4dddc05322fb6df3ab881497778d7932d70d038a/screens/5%20-%20created%20succesfully.png)
 
-![]()
+7. Utilizamos el endpoint para hacer una eliminación física
 
-8. Utilizamos el endpoint para hacer una eliminación física
+![deketed](https://github.com/CristopherLodbrok117/spring-boot-database-backup-with-threads/blob/4dddc05322fb6df3ab881497778d7932d70d038a/screens/6%20-%20deleted.png)
 
-![]()
+8. El hilo detecta que la base de datos se corrompe y la restaura
 
-El hilo detecta que la base de datos se corrompe y la restaura
+![restored](https://github.com/CristopherLodbrok117/spring-boot-database-backup-with-threads/blob/4dddc05322fb6df3ab881497778d7932d70d038a/screens/7%20-%20corrupted%20and%20restored.png)
+
+10. Solicitamos de nuevo los registros restaurados
+
+![show all again](https://github.com/CristopherLodbrok117/spring-boot-database-backup-with-threads/blob/4dddc05322fb6df3ab881497778d7932d70d038a/screens/8%20-%20restored%20succesfully.png)
